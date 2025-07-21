@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from sys import argv
-from functions.get_files_info import available_functions
+from functions.function_call import available_functions
 
 system_prompt = """
 You are a helpful AI coding agent.
@@ -12,6 +12,9 @@ You are a helpful AI coding agent.
 When a user asks a question or makes a request, make a function call plan. You can perform the following operations:
 
 - List files and directories
+- Read file contents
+- Execute Python files with optional arguments
+- Write or overwrite files
 
 All paths you provide should be relative to the working directory. You do not need to specify the working directory in your function calls as it is automatically injected for security reasons.
 """
@@ -44,11 +47,11 @@ def main():
     )
     if response.candidates[0].content.parts:
         for part in response.candidates[0].content.parts:
-            if hasattr(part, 'function_call') and part.function_call:
+            if hasattr(part, "function_call") and part.function_call:
                 print(
                     f"Calling function: {part.function_call.name}({part.function_call.args})"
                 )
-            elif hasattr(part, 'text') and part.text:
+            elif hasattr(part, "text") and part.text:
                 print(part.text)
     if verbose:
         print(f"User prompt: {user_prompt}")
