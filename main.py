@@ -17,6 +17,7 @@ When a user asks a question or makes a request, make a function call plan. You c
 
 All paths you provide should be relative to the working directory. You do not need to specify the working directory in your function calls as it is automatically injected for security reasons. The working directory is set to "./calculator".
 You can only access files and directories within the working directory. If a file or directory is outside the working directory, you should return an error message indicating that it cannot be accessed.
+Firstly try to modify the existing files  If you need to create a new file, you can do so.
 
 When you call a function, you will receive a response that may contain either a result or an error message. If the function call is successful, return the result. If there is an error, return the error message.
 """
