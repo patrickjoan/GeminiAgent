@@ -10,7 +10,7 @@ schema_run_python_file = types.FunctionDeclaration(
         properties={
             "file_path": types.Schema(
                 type=types.Type.STRING,
-                description="The path to the file to write to, relative to the working directory. If the file does not exist, it will be created.",
+                description="The path to the file to run, relative to the working directory. If the file does not exist, an error will be returned.",
             ),
             "args": types.Schema(
                 type=types.Type.ARRAY,
@@ -50,12 +50,15 @@ def run_python_file(working_directory, file_path, args=[]):
             timeout=30,
         )
         if completed_process.returncode != 0:
-            return f"Error: Python file execution failed with return code {completed_process.returncode}"
-        if completed_process.stdout == "" and completed_process.stderr == "":
-            return "No output produced"
+            return f"Error: Python file execution failed with return code {completed_process.returncode}\nSTDERR: {completed_process.stderr}"
 
-        process_output = f"STDOUT: {completed_process.stdout.strip()}\nSTDERR: {completed_process.stderr.strip()}"
-
-        return process_output
+        output_parts = []
+        if completed_process.stdout.strip():
+            output_parts.append(completed_process.stdout.strip())
+        if completed_process.stderr.strip():
+            output_parts.append(completed_process.stderr.strip())
+            
+        return "\n".join(output_parts) if output_parts else "No output produced"
+        
     except Exception as e:
         return f"Error: executing Python file: {e}"
